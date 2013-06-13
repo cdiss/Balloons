@@ -9,16 +9,13 @@ using namespace std;
 GLMmodel* pmodel = NULL;
 
 void recomputeFrame(int value);
-float myrot = 0.0;	
+float balloon_pos[10][3] = {0};
 
 void recomputeFrame(int value)
 {
-	myrot += 1.0f;
-	if(myrot > 360.0f)
-		myrot -= 360.0f;
+	
 	glutPostRedisplay();
 	glutTimerFunc(TIMER, recomputeFrame, value);
-
 }
 
 // Default constructor
@@ -76,6 +73,9 @@ void Render::init(void)
 
 	recomputeFrame(0);
 
+  for(int i=0; i<10; i++) {
+    balloon_pos[i][0] = (i-5)*40+20;
+  }
 	
 	// Read an obj file and load it, but not displayed yet
     if (!pmodel) {
@@ -186,11 +186,20 @@ void Render::display(void)
     glRotatef(rot[0], 1.0f, 0.0f, 0.0f);
     glRotatef(rot[1], 0.0f, 1.0f, 0.0f);
     glRotatef(rot[2], 0.0f, 0.0f, 1.0f);
-
-	// draw rotating cube
-	drawObjBalloon();
+  
+  glDisable(GL_COLOR_MATERIAL);
 	
-	// this allows opengl to wait for the draw buffer to be ready in the background for the next frame
+  for(int i=0; i<10; i++) {
+    glPushMatrix();
+      glTranslatef(balloon_pos[i][0], balloon_pos[i][1], balloon_pos[i][2]);
+      drawObjBalloon();
+    glPopMatrix();
+  }
+
+	
+  glEnable(GL_COLOR_MATERIAL);
+	
+  // this allows opengl to wait for the draw buffer to be ready in the background for the next frame
 	// therefore, while the current buffer is being drawn in the current frame, a buffer is set ready to draw on frame+1
 	// this call is effective only when GL_DOUBLE is enabled in glutInitDisplayMode in the main function
 	// It is recommended to use glutSwapBuffers and double buffering always
@@ -200,14 +209,10 @@ void Render::display(void)
 
 void Render::drawObjBalloon(void)
 {
-	glDisable(GL_COLOR_MATERIAL);
-	glDisable(GL_LIGHT1);
 	glPushMatrix();
-		glTranslatef(0, 0, 0);
-		glmDraw(pmodel, GLM_SMOOTH | GLM_MATERIAL);
+		glRotatef(180.0f, 0.0f, 0.0f, 1.0f);
+    glmDraw(pmodel, GLM_SMOOTH | GLM_MATERIAL);
 	glPopMatrix();
-	glEnable(GL_LIGHT1);
-	glEnable(GL_COLOR_MATERIAL);
 }
 
 // this is for clamping the numbers between 0 & 360. used for rotation values in the mouse move function
