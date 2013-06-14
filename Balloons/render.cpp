@@ -1,7 +1,7 @@
 #include "render.h"
 #include "glm.h"
-#include <cmath>
-#include <ctime>
+#include <vector>
+#include "balloon.hpp"
 
 #define TIMER 33
 
@@ -11,12 +11,19 @@ using namespace std;
 GLMmodel* pmodel = NULL;
 
 void recomputeFrame(int value);
-float balloon_pos[10][3] = {0};
+std::vector<Balloon*> balloons;
 
 void recomputeFrame(int value)
 {
-	
-	glutPostRedisplay();
+  for (unsigned int i=0; i<balloons.size(); i++) {
+    balloons.at(i)->recompute(); 
+	  if (balloons.at(i)->isOutOfBounds()) {
+      delete balloons.at(i);
+      balloons.erase(balloons.begin()+i);
+      balloons.push_back(new Balloon()); // for the moment, immediately replace the balloon that went off the top
+    }
+  }
+  glutPostRedisplay();
 	glutTimerFunc(TIMER, recomputeFrame, value);
 }
 
@@ -73,7 +80,7 @@ void Render::init(void)
 
 	// set up positioned lights
 	GLfloat lightColor0[] = {0.5f, 0.5f, 0.5f, 1.0f}; //Color (0.5, 0.5, 0.5)
-    GLfloat lightPos0[] = {4.0f, 0.0f, 0.0f, 1.0f}; //Positioned at (4, 0, 8)
+    GLfloat lightPos0[] = {4.0f, 0.0f, 0.0f, 1.0f}; //Position
     glLightfv(GL_LIGHT0, GL_DIFFUSE, lightColor0);
     glLightfv(GL_LIGHT0, GL_POSITION, lightPos0);
 
@@ -91,12 +98,11 @@ void Render::init(void)
 
 	recomputeFrame(0);
 
-  srand(time(NULL));
-
+  // Place 10 initial balloons
   for(int i=0; i<10; i++) {
-    balloon_pos[i][0] = (i-5)*40 + 20;
-    balloon_pos[i][1] = rand()%200 - 100;
-    balloon_pos[i][2] = rand()%400 - 200;
+    Balloon* newballoon = new Balloon();
+    newballoon->randomizeForStart();
+    balloons.push_back(newballoon);
   }
 	
 	// Read an obj file and load it, but not displayed yet
@@ -209,11 +215,13 @@ void Render::display(void)
     glRotatef(rot[1], 0.0f, 1.0f, 0.0f);
     glRotatef(rot[2], 0.0f, 0.0f, 1.0f);
   
+  drawCeiling();
+
   glDisable(GL_COLOR_MATERIAL);
 	
   for(int i=0; i<10; i++) {
     glPushMatrix();
-      glTranslatef(balloon_pos[i][0], balloon_pos[i][1], balloon_pos[i][2]);
+      glTranslatef(balloons[i]->pos[0], balloons[i]->pos[1], balloons[i]->pos[2]);
       drawObjBalloon();
     glPopMatrix();
   }
@@ -235,6 +243,24 @@ void Render::drawObjBalloon(void)
 		glRotatef(180.0f, 0.0f, 0.0f, 1.0f);
     glmDraw(pmodel, GLM_SMOOTH | GLM_MATERIAL);
 	glPopMatrix();
+}
+
+void Render::drawCeiling(void) 
+{
+  glPushMatrix();
+  float ambientCeiling[] = {0.2f, 0.2f, 0.2f, 1.0f};
+  float diffuseCeiling[] = {0.4f, 0.4f, 0.4f, 1.0f};
+  float specularCeiling[] = {0.4f, 0.4f, 0.4f, 1.0f};
+  glMaterialfv(GL_FRONT, GL_AMBIENT, ambientCeiling);
+  glMaterialfv(GL_FRONT, GL_DIFFUSE, diffuseCeiling);
+  glMaterialfv(GL_FRONT, GL_SPECULAR, specularCeiling);
+  glBegin(GL_POLYGON);
+    glVertex3f(-200.0f, 107.0f, -200.0f);
+    glVertex3f(-200.0f, 107.0f, 170.0f);
+    glVertex3f(200.0f, 107.0f, 170.0f);
+    glVertex3f(200.0f, 107.0f, -200.0f);
+  glEnd();
+  glPopMatrix();
 }
 
 // this is for clamping the numbers between 0 & 360. used for rotation values in the mouse move function

@@ -4,10 +4,12 @@
     <ClCompile Include="main.cpp" />
     <ClCompile Include="render.cpp" />
     <ClCompile Include="glm.cpp" />
+    <ClCompile Include="balloon.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="glut.h" />
     <ClInclude Include="render.h" />
     <ClInclude Include="glm.h" />
+    <ClInclude Include="balloon.hpp" />
   </ItemGroup>
 </Project>
