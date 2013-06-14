@@ -1,10 +1,10 @@
 #include <iostream>
-#ifdef __APPLE__
-	#include <GLUT/glut.h>
-#else
-	#include "glut.h"		//GLUT and OpenGL functions
-#endif
 #include "render.h"
+//#ifdef __APPLE__
+//	#include <GLUT/glut.h>
+//#else
+//	#include "glut.h"		//GLUT and OpenGL functions
+//#endif
 
 // define width & height of openGL window
 #define WIDTH 800

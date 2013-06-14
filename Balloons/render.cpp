@@ -1,14 +1,10 @@
 #include "render.h"
-#include "glm.h"
 #include <vector>
 #include "balloon.hpp"
 
 #define TIMER 33
 
 using namespace std;
-
-// Model loading variables
-GLMmodel* pmodel = NULL;
 
 void recomputeFrame(int value);
 std::vector<Balloon*> balloons;
@@ -105,16 +101,18 @@ void Render::init(void)
   }
 	
 	// Read an obj file and load it, but not displayed yet
-    if (!pmodel) {
-        pmodel = glmReadOBJ("data/balloon.obj");
-        if (!pmodel){ 
-			exit(0);
-		}
-        glmUnitize(pmodel);
-        glmFacetNormals(pmodel);
-        glmVertexNormals(pmodel, 90.0);
-    }
-	
+  GLMmodel* pmodel = NULL;
+  if (!pmodel) {
+      pmodel = glmReadOBJ("data/balloon.obj");
+      if (!pmodel) { 
+			  exit(0);
+		  }
+      glmUnitize(pmodel);
+      glmFacetNormals(pmodel);
+      glmVertexNormals(pmodel, 90.0);
+  }
+	Balloon::setModel(pmodel);
+
 }
 
 void Render::reshape(int w, int h)
@@ -221,11 +219,7 @@ void Render::display(void)
 
 	
   for(int i=0; i<10; i++) {
-	 //material definition
-    glPushMatrix();
-      glTranslatef(balloons[i]->pos[0], balloons[i]->pos[1], balloons[i]->pos[2]);
-      drawObjBalloon();
-    glPopMatrix();
+    balloons.at(i)->draw();
   }
 	
   // ALSO WHY? 

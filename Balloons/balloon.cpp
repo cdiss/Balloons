@@ -1,7 +1,8 @@
-#include "balloon.hpp"
-#include <cstdlib> // rand()
+#include <stdlib.h> // rand()
 #include <ctime>
 #include <iostream>
+#include "balloon.hpp"
+
 using namespace std;
 
 Balloon::Balloon() {
@@ -11,8 +12,18 @@ Balloon::Balloon() {
   spd = ((float)(rand()%100))/100.0f+1.0f;
 }
 
+GLMmodel* Balloon::pmodel = NULL;
+
 void Balloon::randomizeForStart() {
   pos[1] = rand()%150 - 100.0f;
+}
+
+void Balloon::draw() {
+  glPushMatrix();
+  glTranslatef(pos[0], pos[1], pos[2]);
+  glRotatef(180.0f, 0.0f, 0.0f, 1.0f);
+  glmDraw(pmodel, GLM_SMOOTH | GLM_MATERIAL);
+  glPopMatrix();
 }
 
 void Balloon::recompute() {
@@ -21,4 +32,8 @@ void Balloon::recompute() {
 
 bool Balloon::isOutOfBounds() {
   return (pos[1] > 100.0f);
+}
+
+void Balloon::setModel(GLMmodel* aModel) {
+  pmodel = aModel;
 }
