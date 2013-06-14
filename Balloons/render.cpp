@@ -1,14 +1,10 @@
 #include "render.h"
-#include "glm.h"
 #include <vector>
 #include "balloon.hpp"
 
 #define TIMER 33
 
 using namespace std;
-
-// Model loading variables
-GLMmodel* pmodel = NULL;
 
 void recomputeFrame(int value);
 std::vector<Balloon*> balloons;
@@ -106,17 +102,19 @@ void Render::init(void)
   }
 	
 	// Read an obj file and load it, but not displayed yet
-    if (!pmodel) {
-        pmodel = glmReadOBJ("data/balloon.obj");
-        if (!pmodel){ 
-			cout << "POOOOOOP" << endl;
-			exit(0);
-		}
-        glmUnitize(pmodel);
-        glmFacetNormals(pmodel);
-        glmVertexNormals(pmodel, 90.0);
-    }
-	
+  GLMmodel* pmodel = NULL;
+  if (!pmodel) {
+      pmodel = glmReadOBJ("data/balloon.obj");
+      if (!pmodel) { 
+			  cout << "POOOOOOP" << endl;
+			  exit(0);
+		  }
+      glmUnitize(pmodel);
+      glmFacetNormals(pmodel);
+      glmVertexNormals(pmodel, 90.0);
+  }
+	Balloon::setModel(pmodel);
+
 }
 
 void Render::reshape(int w, int h)
@@ -220,10 +218,7 @@ void Render::display(void)
   glDisable(GL_COLOR_MATERIAL);
 	
   for(int i=0; i<10; i++) {
-    glPushMatrix();
-      glTranslatef(balloons[i]->pos[0], balloons[i]->pos[1], balloons[i]->pos[2]);
-      drawObjBalloon();
-    glPopMatrix();
+    balloons.at(i)->draw();
   }
 
 	
@@ -237,13 +232,13 @@ void Render::display(void)
 }
 
 
-void Render::drawObjBalloon(void)
-{
-	glPushMatrix();
-		glRotatef(180.0f, 0.0f, 0.0f, 1.0f);
-    glmDraw(pmodel, GLM_SMOOTH | GLM_MATERIAL);
-	glPopMatrix();
-}
+//void Render::drawObjBalloon(void)
+//{
+//	glPushMatrix();
+//		glRotatef(180.0f, 0.0f, 0.0f, 1.0f);
+//    glmDraw(pmodel, GLM_SMOOTH | GLM_MATERIAL);
+//	glPopMatrix();
+//}
 
 void Render::drawCeiling(void) 
 {

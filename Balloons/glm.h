@@ -11,6 +11,8 @@
 
  */
 
+#ifndef GLM_H_
+#define GLM_H_
 
 #if defined(__APPLE__) || defined(MACOSX)
 #include <GLUT/glut.h>
@@ -280,3 +282,5 @@ glmWeld(GLMmodel* model, GLfloat epsilon);
  */
 GLubyte* 
 glmReadPPM(char* filename, int* width, int* height);
+
+#endif
