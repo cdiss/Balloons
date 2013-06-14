@@ -1,5 +1,7 @@
 #include "render.h"
 #include "glm.h"
+#include <cmath>
+#include <ctime>
 
 #define TIMER 33
 
@@ -89,8 +91,12 @@ void Render::init(void)
 
 	recomputeFrame(0);
 
+  srand(time(NULL));
+
   for(int i=0; i<10; i++) {
-    balloon_pos[i][0] = (i-5)*40+20;
+    balloon_pos[i][0] = (i-5)*40 + 20;
+    balloon_pos[i][1] = rand()%200 - 100;
+    balloon_pos[i][2] = rand()%400 - 200;
   }
 	
 	// Read an obj file and load it, but not displayed yet
