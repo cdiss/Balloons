@@ -221,7 +221,7 @@ void Render::display(void)
 
 	
   for(int i=0; i<10; i++) {
-	  //material definition
+	 //material definition
     glPushMatrix();
       glTranslatef(balloons[i]->pos[0], balloons[i]->pos[1], balloons[i]->pos[2]);
       drawObjBalloon();
@@ -241,9 +241,9 @@ void Render::display(void)
 void Render::drawObjBalloon(void)
 {
 	glPushMatrix();
-		glRotatef(180.0f, 0.0f, 0.0f, 1.0f);
+		glScalef(5.0f, 5.0f, 5.0f); // scale the balloons
+		glRotatef(180.0f, 0.0f, 0.0f, 1.0f); // turn them so they aren't upside down
 		glmDraw(pmodel, GLM_SMOOTH | GLM_MATERIAL);
-
 	glPopMatrix();
 }
 
