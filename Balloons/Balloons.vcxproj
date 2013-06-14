@@ -60,11 +60,13 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="balloon.hpp" />
     <ClInclude Include="glm.h" />
     <ClInclude Include="glut.h" />
     <ClInclude Include="render.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="balloon.cpp" />
     <ClCompile Include="glm.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="render.cpp" />

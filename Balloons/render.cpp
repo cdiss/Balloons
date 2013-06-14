@@ -1,5 +1,7 @@
 #include "render.h"
 #include "glm.h"
+#include <vector>
+#include "balloon.hpp"
 
 #define TIMER 33
 
@@ -9,12 +11,19 @@ using namespace std;
 GLMmodel* pmodel = NULL;
 
 void recomputeFrame(int value);
-float balloon_pos[10][3] = {0};
+std::vector<Balloon*> balloons;
 
 void recomputeFrame(int value)
 {
-	
-	glutPostRedisplay();
+  for (unsigned int i=0; i<balloons.size(); i++) {
+    balloons.at(i)->recompute(); 
+	  if (balloons.at(i)->isOutOfBounds()) {
+      delete balloons.at(i);
+      balloons.erase(balloons.begin()+i);
+      balloons.push_back(new Balloon()); // for the moment, immediately replace the balloon that went off the top
+    }
+  }
+  glutPostRedisplay();
 	glutTimerFunc(TIMER, recomputeFrame, value);
 }
 
@@ -88,8 +97,11 @@ void Render::init(void)
 
 	recomputeFrame(0);
 
+  // Place 10 initial balloons
   for(int i=0; i<10; i++) {
-    balloon_pos[i][0] = (i-5)*40+20;
+    Balloon* newballoon = new Balloon();
+    newballoon->randomizeForStart();
+    balloons.push_back(newballoon);
   }
 	
 	// Read an obj file and load it, but not displayed yet
@@ -201,14 +213,18 @@ void Render::display(void)
     glRotatef(rot[1], 0.0f, 1.0f, 0.0f);
     glRotatef(rot[2], 0.0f, 0.0f, 1.0f);
   
-	//WHY? 
- glDisable(GL_COLOR_MATERIAL);
+
+
+	//WHY?
+  drawCeiling();
+  glDisable(GL_COLOR_MATERIAL);
+
 	
   for(int i=0; i<10; i++) {
 	  //material definition
     glPushMatrix();
-    glTranslatef(balloon_pos[i][0], balloon_pos[i][1], balloon_pos[i][2]);
-    drawObjBalloon();
+      glTranslatef(balloons[i]->pos[0], balloons[i]->pos[1], balloons[i]->pos[2]);
+      drawObjBalloon();
     glPopMatrix();
   }
 	
@@ -229,6 +245,24 @@ void Render::drawObjBalloon(void)
 		glmDraw(pmodel, GLM_SMOOTH | GLM_MATERIAL);
 
 	glPopMatrix();
+}
+
+void Render::drawCeiling(void) 
+{
+  glPushMatrix();
+  float ambientCeiling[] = {0.2f, 0.2f, 0.2f, 1.0f};
+  float diffuseCeiling[] = {0.4f, 0.4f, 0.4f, 1.0f};
+  float specularCeiling[] = {0.4f, 0.4f, 0.4f, 1.0f};
+  glMaterialfv(GL_FRONT, GL_AMBIENT, ambientCeiling);
+  glMaterialfv(GL_FRONT, GL_DIFFUSE, diffuseCeiling);
+  glMaterialfv(GL_FRONT, GL_SPECULAR, specularCeiling);
+  glBegin(GL_POLYGON);
+    glVertex3f(-200.0f, 107.0f, -200.0f);
+    glVertex3f(-200.0f, 107.0f, 170.0f);
+    glVertex3f(200.0f, 107.0f, 170.0f);
+    glVertex3f(200.0f, 107.0f, -200.0f);
+  glEnd();
+  glPopMatrix();
 }
 
 // this is for clamping the numbers between 0 & 360. used for rotation values in the mouse move function

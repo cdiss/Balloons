@@ -41,8 +41,7 @@ private:
 	int mOldX, mOldY;
 	
 	GLUquadricObj *qobj;
-	void drawPlanetarySystem(void);
-	void drawSun(void);
+	void drawCeiling(void);
 	void drawObjBalloon(void);
 
 };
