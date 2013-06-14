@@ -232,15 +232,6 @@ void Render::display(void)
 	glutSwapBuffers();
 }
 
-void Render::drawObjBalloon(void)
-{
-	glPushMatrix();
-		glScalef(5.0f, 5.0f, 5.0f); // scale the balloons
-		glRotatef(180.0f, 0.0f, 0.0f, 1.0f); // turn them so they aren't upside down
-		glmDraw(pmodel, GLM_SMOOTH | GLM_MATERIAL);
-	glPopMatrix();
-}
-
 void Render::drawCeiling(void) 
 {
   glPushMatrix();
@@ -251,10 +242,10 @@ void Render::drawCeiling(void)
   glMaterialfv(GL_FRONT, GL_DIFFUSE, diffuseCeiling);
   glMaterialfv(GL_FRONT, GL_SPECULAR, specularCeiling);
   glBegin(GL_POLYGON);
-    glVertex3f(-200.0f, 107.0f, -200.0f);
-    glVertex3f(-200.0f, 107.0f, 170.0f);
-    glVertex3f(200.0f, 107.0f, 170.0f);
-    glVertex3f(200.0f, 107.0f, -200.0f);
+    glVertex3f(-200.0f, 135.0f, -200.0f);
+    glVertex3f(-200.0f, 135.0f, 170.0f);
+    glVertex3f(200.0f, 135.0f, 170.0f);
+    glVertex3f(200.0f, 135.0f, -200.0f);
   glEnd();
   glPopMatrix();
 }
