@@ -71,14 +71,13 @@ void Render::init(void)
 
 	// set up positioned lights
 	GLfloat lightColor0[] = {0.5f, 0.5f, 0.5f, 1.0f}; //Color (0.5, 0.5, 0.5)
-    GLfloat lightPos0[] = {4.0f, 0.0f, 0.0f, 1.0f}; //Positioned at (4, 0, 8)
-    glLightfv(GL_LIGHT0, GL_DIFFUSE, lightColor0);
+    GLfloat lightPos0[] = {4.0f, 0.0f, 8.0f, 1.0f}; //Positioned at (4, 0, 8)
+	glLightfv(GL_LIGHT0, GL_DIFFUSE, lightColor0);
     glLightfv(GL_LIGHT0, GL_POSITION, lightPos0);
 
 	 //Add directed light
     GLfloat lightColor1[] = {0.5f, 0.2f, 0.2f, 1.0f}; //Color (0.5, 0.2, 0.2)
-    //Coming from the direction (-1, 0.5, 0.5)
-    GLfloat lightPos1[] = {-1.0f, 0.5f, 0.5f, 0.0f};
+    GLfloat lightPos1[] = {-1.0f, 0.5f, 0.5f, 0.0f};  //Coming from the direction (-1, 0.5, 0.5)
     glLightfv(GL_LIGHT1, GL_DIFFUSE, lightColor1);
     glLightfv(GL_LIGHT1, GL_POSITION, lightPos1);
 
@@ -97,7 +96,6 @@ void Render::init(void)
     if (!pmodel) {
         pmodel = glmReadOBJ("data/balloon.obj");
         if (!pmodel){ 
-			cout << "POOOOOOP" << endl;
 			exit(0);
 		}
         glmUnitize(pmodel);
@@ -203,16 +201,18 @@ void Render::display(void)
     glRotatef(rot[1], 0.0f, 1.0f, 0.0f);
     glRotatef(rot[2], 0.0f, 0.0f, 1.0f);
   
-  glDisable(GL_COLOR_MATERIAL);
+	//WHY? 
+ glDisable(GL_COLOR_MATERIAL);
 	
   for(int i=0; i<10; i++) {
+	  //material definition
     glPushMatrix();
-      glTranslatef(balloon_pos[i][0], balloon_pos[i][1], balloon_pos[i][2]);
-      drawObjBalloon();
+    glTranslatef(balloon_pos[i][0], balloon_pos[i][1], balloon_pos[i][2]);
+    drawObjBalloon();
     glPopMatrix();
   }
-
 	
+  // ALSO WHY? 
   glEnable(GL_COLOR_MATERIAL);
 	
   // this allows opengl to wait for the draw buffer to be ready in the background for the next frame
@@ -222,12 +222,12 @@ void Render::display(void)
 	glutSwapBuffers();
 }
 
-
 void Render::drawObjBalloon(void)
 {
 	glPushMatrix();
 		glRotatef(180.0f, 0.0f, 0.0f, 1.0f);
-    glmDraw(pmodel, GLM_SMOOTH | GLM_MATERIAL);
+		glmDraw(pmodel, GLM_SMOOTH | GLM_MATERIAL);
+
 	glPopMatrix();
 }
 
