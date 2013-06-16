@@ -151,19 +151,19 @@ void Render::mouseClick(int button, int state, int x, int y)
 	{
 		mOldX = x;
 		mOldY = y;
-        switch (button)  
+    switch (button)  
 		{
 			case GLUT_LEFT_BUTTON:
 				mButton = LEFT;
 				break;
 			case GLUT_MIDDLE_BUTTON: 
-				mButton = MIDDLE; 
-				break;
+				mButton = MIDDLE;
+        break;
 			case GLUT_RIGHT_BUTTON:
 				mButton = RIGHT;
-				break;
+        break;
 			default:
-				break;
+        break;
 		}
 	}
 	else if (state == GLUT_UP)
@@ -174,7 +174,8 @@ void Render::mouseClick(int button, int state, int x, int y)
 
 void Render::mouseMove(int x, int y)
 {
-	if (mButton == LEFT) 
+	/*
+  if (mButton == LEFT) 
 	{
 		rot[0] -= ((mOldY - y) * 180.0f) / 1000.0f;
 		rot[1] -= ((mOldX - x) * 180.0f) / 1000.0f;
@@ -191,9 +192,47 @@ void Render::mouseMove(int x, int y)
 		eye[1] -= ((mOldY - y) * 180.0f) / 1000.0f;
 		clamp(rot[0], rot[1], rot[2]);
 	}	 
-	mOldX = x; 
+  */
+  
+  if (mButton == LEFT) {
+    float angle = atan(((float)y-mOldY)/((float)x-mOldX));
+    if (x-mOldX > 0.0f) {  // move was somewhat to the right
+      if (angle < -M_PI/3) {  // move down only
+        gunPitchDegrees -= 0.5f;
+      } else if (angle < -M_PI/6) {  // move both down and right
+        gunPitchDegrees -= 0.5f;
+        gunYawDegrees -= 0.5f;
+      } else if (angle < M_PI/6) {  // move right only
+        gunYawDegrees -= 0.5f;
+      } else if (angle < M_PI/3) {  // move both up and right
+        gunPitchDegrees += 0.5f;
+        gunYawDegrees -= 0.5f;
+      } else {  // move up only
+        gunPitchDegrees += 0.5f;
+      }
+    } else {  // move was somewhat to the left
+      if (angle < -M_PI/3) {  // move up only
+        gunPitchDegrees += 0.5f;
+      } else if (angle < -M_PI/6) {  // move both up and left
+        gunPitchDegrees += 0.5f;
+        gunYawDegrees += 0.5f;
+      } else if (angle < M_PI/6) {  // move left only
+        gunYawDegrees += 0.5f;
+      } else if (angle < M_PI/3) {  // move both down and left
+        gunPitchDegrees -= 0.5f;
+        gunYawDegrees += 0.5f;
+      } else {  // move down only
+        gunPitchDegrees -= 0.5f;
+      }
+    }
+    if(gunYawDegrees > 80.0f) gunYawDegrees = 80.0f;
+    if(gunYawDegrees < -80.0f) gunYawDegrees = -80.0f;
+    if(gunPitchDegrees > 80.0f) gunPitchDegrees = 80.0f;
+    if(gunPitchDegrees < -10.0f) gunPitchDegrees = -10.0f;
+  }
+  mOldX = x; 
 	mOldY = y;
-
+    
 }
 
 void Render::keyPos(unsigned char key, int x, int y)
@@ -271,7 +310,7 @@ void Render::display(void)
   glEnable(GL_COLOR_MATERIAL);
 
   drawGunSights();
-	
+
   // this allows opengl to wait for the draw buffer to be ready in the background for the next frame
 	// therefore, while the current buffer is being drawn in the current frame, a buffer is set ready to draw on frame+1
 	// this call is effective only when GL_DOUBLE is enabled in glutInitDisplayMode in the main function
