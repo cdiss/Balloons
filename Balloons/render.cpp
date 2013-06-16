@@ -18,7 +18,14 @@ void recomputeFrame(int value)
 	  if (balloons.at(i)->isOutOfBounds()) {
       delete balloons.at(i);
       balloons.erase(balloons.begin()+i);
-      balloons.push_back(new Balloon()); // for the moment, immediately replace the balloon that went off the top
+      int newColor_int = rand()%2;
+      BalloonColor newColor;
+      if (newColor_int == 0) {
+        newColor = RED;
+      } else {
+        newColor = YELLOW;
+      }
+      balloons.push_back(new Balloon(newColor)); // for the moment, immediately replace the balloon that went off the top
     }
   }
 
