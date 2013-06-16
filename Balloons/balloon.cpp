@@ -15,7 +15,7 @@ Balloon::Balloon(BalloonColor aColor) {
     } else if (newColor_int == 2){
         aColor = GREEN;
     } else {
-      aColor = YELLOW;
+        aColor = YELLOW;
     }
   }
   pos[0] = rand()%400 - 200.0f;
@@ -45,10 +45,13 @@ void Balloon::draw() {
     break;
   case YELLOW:
     glmDraw(pmodelYellow, GLM_SMOOTH | GLM_MATERIAL);
+    break;
   case GREEN:
     glmDraw(pmodelGreen, GLM_SMOOTH | GLM_MATERIAL);
+    break;
   case BLUE:
     glmDraw(pmodelBlue, GLM_SMOOTH | GLM_MATERIAL);
+    break;
   default:
     break;
   }

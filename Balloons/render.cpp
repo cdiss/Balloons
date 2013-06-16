@@ -346,9 +346,11 @@ void Render::drawCeiling(void)
   float ambientCeiling[] = {0.2f, 0.2f, 0.2f, 1.0f};
   float diffuseCeiling[] = {0.4f, 0.4f, 0.4f, 1.0f};
   float specularCeiling[] = {0.4f, 0.4f, 0.4f, 1.0f};
+  float emissionCeiling[] = {0.0f, 0.0f, 0.0f, 1.0f};
   glMaterialfv(GL_FRONT, GL_AMBIENT, ambientCeiling);
   glMaterialfv(GL_FRONT, GL_DIFFUSE, diffuseCeiling);
   glMaterialfv(GL_FRONT, GL_SPECULAR, specularCeiling);
+  glMaterialfv(GL_FRONT, GL_EMISSION, emissionCeiling);
   glBegin(GL_POLYGON);
     glVertex3f(CEILING_MIN_X, CEILING_HEIGHT, CEILING_MIN_Z);
     glVertex3f(CEILING_MIN_X, CEILING_HEIGHT, CEILING_MAX_Z);
@@ -363,7 +365,9 @@ void Render::drawGunSights(void)
   float brightRed[] = {1.0f, 0.0f, 0.0f, 1.0f};
   glMaterialfv(GL_FRONT, GL_AMBIENT, brightRed);
   glMaterialfv(GL_FRONT, GL_DIFFUSE, brightRed);
-  glLineWidth(2.0f);
+  glMaterialfv(GL_FRONT, GL_SPECULAR, brightRed);
+  glMaterialfv(GL_FRONT, GL_EMISSION, brightRed);
+  glLineWidth(1.0f);
 
   glPushMatrix();
     glTranslatef(GUN_POS[0], GUN_POS[1], GUN_POS[2]);
