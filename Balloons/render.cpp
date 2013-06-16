@@ -82,12 +82,12 @@ void Render::init(void)
 	glLightfv(GL_LIGHT0, GL_DIFFUSE, lightColor0);
     glLightfv(GL_LIGHT0, GL_POSITION, lightPos0);
 
-	 //Add directed light
+	/* //Add directed light
     GLfloat lightColor1[] = {0.3f, 0.1f, 0.1f, 1.0f}; //Color (0.5, 0.2, 0.2)
     GLfloat lightPos1[] = {-1.0f, 0.5f, 0.5f, 0.0f};  //Coming from the direction (-1, 0.5, 0.5)
     glLightfv(GL_LIGHT1, GL_DIFFUSE, lightColor1);
     glLightfv(GL_LIGHT1, GL_POSITION, lightPos1);
-
+     */
 	qobj = gluNewQuadric();
 	gluQuadricDrawStyle(qobj, GLU_FILL);
 	gluQuadricTexture(qobj, GL_TRUE);
