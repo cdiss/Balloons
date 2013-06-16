@@ -333,7 +333,7 @@ void Render::display(void)
     /* load an image file directly as a new OpenGL texture */
     GLuint tex_2d = SOIL_load_OGL_texture
 	(
-     "pow.png",
+     "data/pow.png",
      SOIL_LOAD_AUTO,
      SOIL_CREATE_NEW_ID,
      SOIL_FLAG_MIPMAPS | SOIL_FLAG_INVERT_Y | SOIL_FLAG_NTSC_SAFE_RGB | SOIL_FLAG_COMPRESS_TO_DXT
@@ -344,6 +344,17 @@ void Render::display(void)
     {
         printf( "SOIL loading error: '%s'\n", SOIL_last_result() );
     }
+    
+    glColor3f(0.0f,1.0f,.50f);
+    glBindTexture(GL_TEXTURE_2D, tex_2d);
+    glEnable(GL_TEXTURE_2D);
+    glBegin(GL_QUADS);
+    glTexCoord2d(0,0);        glVertex3f(-8.0, -8.0, 0.0);
+    glTexCoord2d(0,1);        glVertex3f(-8.0, 8.0, 0.0);
+    glTexCoord2d(1,1);        glVertex3f(8.0, 8.0, 0.0);
+    glTexCoord2d(1,0);        glVertex3f(8.0, -8.0, 0.0);
+    
+    glEnd();
     
 	//WHY?
   glDisable(GL_COLOR_MATERIAL);
