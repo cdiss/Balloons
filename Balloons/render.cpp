@@ -10,6 +10,7 @@ void recomputeFrame(int value);
 std::vector<Balloon*> balloons;
 float gunYawDegrees = 0.0f;
 float gunPitchDegrees = 30.0f;
+std::vector<float*> sphereLocations;
 
 void recomputeFrame(int value)
 {
@@ -135,6 +136,9 @@ void Render::mouseClick(int button, int state, int x, int y)
 		{
 			case GLUT_LEFT_BUTTON:
 				mButton = LEFT;
+        float* temp = new float[2];
+        temp[0] = (float)x;  temp[1] = (float)y;
+        sphereLocations.push_back(temp);
 				break;
 			case GLUT_MIDDLE_BUTTON: 
 				mButton = MIDDLE; 
@@ -253,6 +257,13 @@ void Render::display(void)
 
   drawGunSights();
 	
+  if (mButton = LEFT) {
+    glLoadIdentity();
+    glTranslatef((mOldX-Wx/2), (mOldY-Wy/2), 0.0f);
+    cout << "Printing a sphere at mouse pos" << endl;
+    glutSolidSphere(2.0f, 15, 15);
+  }
+
   // this allows opengl to wait for the draw buffer to be ready in the background for the next frame
 	// therefore, while the current buffer is being drawn in the current frame, a buffer is set ready to draw on frame+1
 	// this call is effective only when GL_DOUBLE is enabled in glutInitDisplayMode in the main function
