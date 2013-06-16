@@ -127,7 +127,7 @@ void Render::init(void)
         glmFacetNormals(pmodelYellow);
         glmVertexNormals(pmodelYellow, 90.0);
     }
-	Balloon::setModel(pmodelYellow);
+	Balloon::setModelYellow(pmodelYellow);
 
 }
 

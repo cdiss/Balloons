@@ -11,7 +11,8 @@ public:
   void recompute();
   bool isOutOfBounds();
   static void setModel(GLMmodel*);
-
+    static void setModelYellow(GLMmodel*);
+    
 protected:
   float pos[3];
   float spd;

@@ -15,7 +15,6 @@ Balloon::Balloon() {
 GLMmodel* Balloon::pmodel = NULL;
 GLMmodel* Balloon::pmodelYellow = NULL;
 
-
 void Balloon::randomizeForStart() {
   pos[1] = rand()%150 - 100.0f;
 }
@@ -45,4 +44,8 @@ bool Balloon::isOutOfBounds() {
 
 void Balloon::setModel(GLMmodel* aModel) {
   pmodel = aModel;
+}
+
+void Balloon::setModelYellow(GLMmodel* aModel){
+    pmodelYellow = aModel;
 }
