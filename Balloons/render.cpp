@@ -216,43 +216,42 @@ void Render::mouseMove(int x, int y)
 		clamp(rot[0], rot[1], rot[2]);
 	}	 
   */
-  
-  if (mButton == LEFT) {
-    float angle = atan(((float)y-mOldY)/((float)x-mOldX));
-    if (x-mOldX > 0.0f) {  // move was somewhat to the right
-      if (angle < -M_PI/3) {  // move down only
-        gunPitchDegrees -= 0.5f;
-      } else if (angle < -M_PI/6) {  // move both down and right
-        gunPitchDegrees -= 0.5f;
-        gunYawDegrees -= 0.5f;
-      } else if (angle < M_PI/6) {  // move right only
-        gunYawDegrees -= 0.5f;
-      } else if (angle < M_PI/3) {  // move both up and right
-        gunPitchDegrees += 0.5f;
-        gunYawDegrees -= 0.5f;
-      } else {  // move up only
-        gunPitchDegrees += 0.5f;
-      }
-    } else {  // move was somewhat to the left
-      if (angle < -M_PI/3) {  // move up only
-        gunPitchDegrees += 0.5f;
-      } else if (angle < -M_PI/6) {  // move both up and left
-        gunPitchDegrees += 0.5f;
-        gunYawDegrees += 0.5f;
-      } else if (angle < M_PI/6) {  // move left only
-        gunYawDegrees += 0.5f;
-      } else if (angle < M_PI/3) {  // move both down and left
-        gunPitchDegrees -= 0.5f;
-        gunYawDegrees += 0.5f;
-      } else {  // move down only
-        gunPitchDegrees -= 0.5f;
-      }
+
+  float angle = atan(((float)y-mOldY)/((float)x-mOldX));
+  if (x-mOldX > 0.0f) {  // move was somewhat to the right
+    if (angle < -M_PI/3) {  // move down only
+      gunPitchDegrees -= 0.5f;
+    } else if (angle < -M_PI/6) {  // move both down and right
+      gunPitchDegrees -= 0.5f;
+      gunYawDegrees -= 0.5f;
+    } else if (angle < M_PI/6) {  // move right only
+      gunYawDegrees -= 0.5f;
+    } else if (angle < M_PI/3) {  // move both up and right
+      gunPitchDegrees += 0.5f;
+      gunYawDegrees -= 0.5f;
+    } else {  // move up only
+      gunPitchDegrees += 0.5f;
     }
-    if(gunYawDegrees > 80.0f) gunYawDegrees = 80.0f;
-    if(gunYawDegrees < -80.0f) gunYawDegrees = -80.0f;
-    if(gunPitchDegrees > 80.0f) gunPitchDegrees = 80.0f;
-    if(gunPitchDegrees < -10.0f) gunPitchDegrees = -10.0f;
+  } else {  // move was somewhat to the left
+    if (angle < -M_PI/3) {  // move up only
+      gunPitchDegrees += 0.5f;
+    } else if (angle < -M_PI/6) {  // move both up and left
+      gunPitchDegrees += 0.5f;
+      gunYawDegrees += 0.5f;
+    } else if (angle < M_PI/6) {  // move left only
+      gunYawDegrees += 0.5f;
+    } else if (angle < M_PI/3) {  // move both down and left
+      gunPitchDegrees -= 0.5f;
+      gunYawDegrees += 0.5f;
+    } else {  // move down only
+      gunPitchDegrees -= 0.5f;
+    }
   }
+  if(gunYawDegrees > 80.0f) gunYawDegrees = 80.0f;
+  if(gunYawDegrees < -80.0f) gunYawDegrees = -80.0f;
+  if(gunPitchDegrees > 80.0f) gunPitchDegrees = 80.0f;
+  if(gunPitchDegrees < -10.0f) gunPitchDegrees = -10.0f;
+  
   mOldX = x; 
 	mOldY = y;
     
@@ -364,7 +363,8 @@ void Render::drawGunSights(void)
   float brightRed[] = {1.0f, 0.0f, 0.0f, 1.0f};
   glMaterialfv(GL_FRONT, GL_AMBIENT, brightRed);
   glMaterialfv(GL_FRONT, GL_DIFFUSE, brightRed);
-  
+  glLineWidth(2.0f);
+
   glPushMatrix();
     glTranslatef(GUN_POS[0], GUN_POS[1], GUN_POS[2]);
     glutSolidSphere(5.0, 50, 50);  // the gun for now (programmer art haha)
@@ -385,7 +385,7 @@ void Render::drawGunSights(void)
         glVertex3f(0, 0, 0);
         glVertex3f(0, 0, -LASER_SIGHT_LENGTH);
       glEnd();
-    glPopMatrix();    
+    glPopMatrix();
   glPopMatrix();
   
   // In the same coordinate system as the one that the ceiling is drawn in
@@ -405,7 +405,7 @@ void Render::drawGunSights(void)
             // draw dot at intersection with ceiling
             glPushMatrix();
             glTranslatef(laser_intersect_ceiling[0], laser_intersect_ceiling[1], laser_intersect_ceiling[2]);
-            glutSolidSphere(1.0, 15, 15);
+            glutSolidSphere(2.0, 15, 15);
             glPopMatrix();
       }
     }
