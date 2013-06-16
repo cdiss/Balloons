@@ -73,7 +73,6 @@ void Render::init(void)
 
 	glShadeModel (GL_SMOOTH);
 
-
 	// Initialize lighting
 	glEnable (GL_LIGHTING);
 	glEnable(GL_LIGHT0);
@@ -85,8 +84,8 @@ void Render::init(void)
 	glLightModelfv(GL_LIGHT_MODEL_AMBIENT, ambientColor);
 
 	// set up positioned lights
-	GLfloat lightColor0[] = {0.3f, 0.3f, 0.3f, 1.0f}; //Color (0.5, 0.5, 0.5)
-    GLfloat lightPos0[] = {4.0f, 0.0f, 8.0f, 1.0f}; //Positioned at (4, 0, 8)
+	GLfloat lightColor0[] = {0.5f, 0.5f, 0.5f, 1.0f}; //Color (0.5, 0.5, 0.5)
+    GLfloat lightPos0[] = {400.0f, 200.0f, 300.0f, 1.0f}; //Positioned at (4, 0, 8)
 	glLightfv(GL_LIGHT0, GL_DIFFUSE, lightColor0);
     glLightfv(GL_LIGHT0, GL_POSITION, lightPos0);
 
@@ -111,21 +110,21 @@ void Render::init(void)
   }
 	
 	// Read an obj file and load it, but not displayed yet
-  GLMmodel* pmodel = NULL;
+  GLMmodel* pmodelRed = NULL;
   GLMmodel* pmodelYellow = NULL;
   GLMmodel* pmodelBlue = NULL;
   GLMmodel* pmodelGreen = NULL;
     
-  if (!pmodel) {
-      pmodel = glmReadOBJ("data/balloon.obj");
-      if (!pmodel) { 
+  if (!pmodelRed) {
+      pmodelRed = glmReadOBJ("data/balloonRed.obj");
+      if (!pmodelRed) {
 			  exit(0);
 		  }
-      glmUnitize(pmodel);
-      glmFacetNormals(pmodel);
-      glmVertexNormals(pmodel, 90.0);
+      glmUnitize(pmodelRed);
+      glmFacetNormals(pmodelRed);
+      glmVertexNormals(pmodelRed, 90.0);
   }
-	Balloon::setModel(pmodel);
+	Balloon::setModelRed(pmodelRed);
     
     if (!pmodelYellow) {
         pmodelYellow = glmReadOBJ("data/balloonYellow.obj");

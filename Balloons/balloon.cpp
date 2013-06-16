@@ -25,7 +25,7 @@ Balloon::Balloon(BalloonColor aColor) {
   spd = ((float)(rand()%100))/200.0f+0.5f;
 }
 
-GLMmodel* Balloon::pmodel = NULL;
+GLMmodel* Balloon::pmodelRed = NULL;
 GLMmodel* Balloon::pmodelYellow = NULL;
 GLMmodel* Balloon::pmodelBlue = NULL;
 GLMmodel* Balloon::pmodelGreen = NULL;
@@ -41,7 +41,7 @@ void Balloon::draw() {
   glRotatef(180.0f, 0.0f, 0.0f, 1.0f);
   switch(color) {
   case RED:
-    glmDraw(pmodel, GLM_SMOOTH | GLM_MATERIAL);
+    glmDraw(pmodelRed, GLM_SMOOTH | GLM_MATERIAL);
     break;
   case YELLOW:
     glmDraw(pmodelYellow, GLM_SMOOTH | GLM_MATERIAL);
@@ -66,8 +66,8 @@ bool Balloon::isOutOfBounds() {
   return (pos[1] > 100.0f);
 }
 
-void Balloon::setModel(GLMmodel* aModel) {
-  pmodel = aModel;
+void Balloon::setModelRed(GLMmodel* aModel) {
+  pmodelRed = aModel;
 }
 
 void Balloon::setModelYellow(GLMmodel* aModel){
