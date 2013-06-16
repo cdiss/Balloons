@@ -43,6 +43,10 @@ void myKeyStroke(unsigned char key, int x, int y)
 	theApp.keyPos(key, x, y);
 }
 
+void mySpecialKeyStroke(int key, int x, int y)
+{
+  theApp.specialKeyStroke(key, x, y);
+}
 
 // The main function here
 int main(int argc, char ** argv)
@@ -84,6 +88,9 @@ int main(int argc, char ** argv)
 
 	// specify keyboard input events
 	glutKeyboardFunc(myKeyStroke);
+
+  // specify keyboard special key input events
+	glutSpecialFunc(mySpecialKeyStroke);
 
 	// Enter the opengl event processing loop
 	// no draw events will be processed without glutMainLoop()

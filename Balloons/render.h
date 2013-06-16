@@ -26,6 +26,7 @@ public:
 	void mouseClick(int button, int state, int x, int y);
 	void mouseMove(int x, int y);
 	void keyPos(unsigned char key, int x, int y);
+  void specialKeyStroke(int key, int x, int y);
 	
 private:
 	// These functions are private and cannot be called anywhere outside of render class
@@ -43,7 +44,7 @@ private:
 	GLUquadricObj *qobj;
 	void drawCeiling(void);
 	void drawObjBalloon(void);
-
+  void drawGunSights(void);
 };
 
 #endif

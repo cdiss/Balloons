@@ -9,7 +9,7 @@ Balloon::Balloon() {
   pos[0] = rand()%400 - 200.0f;
   pos[1] = -100.0f;
   pos[2] = rand()%370 - 200.0f;
-  spd = ((float)(rand()%100))/100.0f+1.0f;
+  spd = ((float)(rand()%100))/50.0f+0.5f;
 }
 
 GLMmodel* Balloon::pmodel = NULL;

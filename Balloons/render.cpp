@@ -8,6 +8,8 @@ using namespace std;
 
 void recomputeFrame(int value);
 std::vector<Balloon*> balloons;
+float gunYawDegrees = 0.0f;
+float gunPitchDegrees = 30.0f;
 
 void recomputeFrame(int value)
 {
@@ -19,6 +21,7 @@ void recomputeFrame(int value)
       balloons.push_back(new Balloon()); // for the moment, immediately replace the balloon that went off the top
     }
   }
+
   glutPostRedisplay();
 	glutTimerFunc(TIMER, recomputeFrame, value);
 }
@@ -177,14 +180,37 @@ void Render::keyPos(unsigned char key, int x, int y)
 {
 	switch (key)
 	{
-		default:
+  default:
 			break;
-	    case 27:	// this is for the 'Esc' key on the keyboard, quit the program when the esc key is pressed
+	case 27:	// this is for the 'Esc' key on the keyboard, quit the program when the esc key is pressed
 			exit (0);
 	}
 }
 
-
+void Render::specialKeyStroke(int key, int x, int y)
+{
+  switch(key)
+  {
+  case GLUT_KEY_LEFT:
+    gunYawDegrees += 2.0f;
+    if(gunYawDegrees > 80.0f) gunYawDegrees = 80.0f;
+    break;
+  case GLUT_KEY_RIGHT:
+    gunYawDegrees -= 2.0f;
+    if(gunYawDegrees < -80.0f) gunYawDegrees = -80.0f;
+    break;
+  case GLUT_KEY_UP:
+    gunPitchDegrees += 2.0f;
+    if(gunPitchDegrees > 80.0f) gunPitchDegrees = 80.0f;
+    break;
+  case GLUT_KEY_DOWN:
+    gunPitchDegrees -= 2.0f;
+    if(gunPitchDegrees < -10.0f) gunPitchDegrees = -10.0f;
+    break;
+  default:
+    break;
+  }
+}
 
 void Render::display(void)
 {
@@ -211,19 +237,21 @@ void Render::display(void)
     glRotatef(rot[1], 0.0f, 1.0f, 0.0f);
     glRotatef(rot[2], 0.0f, 0.0f, 1.0f);
   
-
+  
+  drawCeiling();
 
 	//WHY?
-  drawCeiling();
   glDisable(GL_COLOR_MATERIAL);
 
-	
+	// draw balloons
   for(int i=0; i<10; i++) {
     balloons.at(i)->draw();
   }
 	
   // ALSO WHY? 
   glEnable(GL_COLOR_MATERIAL);
+
+  drawGunSights();
 	
   // this allows opengl to wait for the draw buffer to be ready in the background for the next frame
 	// therefore, while the current buffer is being drawn in the current frame, a buffer is set ready to draw on frame+1
@@ -248,6 +276,63 @@ void Render::drawCeiling(void)
     glVertex3f(200.0f, 135.0f, -200.0f);
   glEnd();
   glPopMatrix();
+}
+
+void Render::drawGunSights(void)
+{
+  const float LASER_SIGHT_LENGTH = 400.0f;
+  const float CEILING_HEIGHT = 135.0f;
+  const float CEILING_MIN_X = -200.0f;
+  const float CEILING_MAX_X = 200.0f;
+  const float CEILING_MIN_Z = -200.0f;
+  const float CEILING_MAX_Z = 170.0f;
+  const float GUN_POS[] = {0.0f, -50.0f, 300.0f};
+
+  glPushMatrix();
+    glTranslatef(GUN_POS[0], GUN_POS[1], GUN_POS[2]);
+    glutSolidSphere(5.0, 50, 50);  // the gun for now (programmer art haha)
+    glPushMatrix();
+      glTranslatef(-2.0f, 0.0f, 0.0f);
+      glRotatef(gunYawDegrees, 0.0f, 1.0f, 0.0f);
+      glRotatef(gunPitchDegrees, 1.0f, 0.0f, 0.0f);
+      glBegin(GL_LINES);
+        glVertex3f(0, 0, 0);
+        glVertex3f(0, 0, -LASER_SIGHT_LENGTH);
+      glEnd();
+    glPopMatrix();
+    glPushMatrix();
+      glTranslatef(2.0f, 0.0f, 0.0f);
+      glRotatef(gunYawDegrees, 0.0f, 1.0f, 0.0f);
+      glRotatef(gunPitchDegrees, 1.0f, 0.0f, 0.0f);
+      glBegin(GL_LINES);
+        glVertex3f(0, 0, 0);
+        glVertex3f(0, 0, -LASER_SIGHT_LENGTH);
+      glEnd();
+    glPopMatrix();    
+  glPopMatrix();
+  
+  // In the same coordinate system as the one that the ceiling is drawn in
+  float laser_endpoint[3];
+  laser_endpoint[0] = GUN_POS[0] + LASER_SIGHT_LENGTH * sin(gunYawDegrees/180.0*M_PI) * cos(gunPitchDegrees/180.0*M_PI);
+  laser_endpoint[1] = GUN_POS[1] + LASER_SIGHT_LENGTH * cos(gunPitchDegrees/180.0*M_PI);
+  laser_endpoint[2] = GUN_POS[2] + LASER_SIGHT_LENGTH * cos(gunYawDegrees/180.0*M_PI) * sin(gunPitchDegrees/180.0*M_PI);
+  
+  if(gunPitchDegrees != 0.0f) {   // avoid division by 0
+    float laser_intersect_ceiling_percent = (CEILING_HEIGHT-GUN_POS[1])/(laser_endpoint[1]-GUN_POS[1]);  // the percent of the way along the laser sight that the ceiling is hit
+    if (laser_intersect_ceiling_percent > 0.0f && laser_intersect_ceiling_percent < 1.0f) {
+      float laser_intersect_ceiling[3] = {laser_intersect_ceiling_percent*(laser_endpoint[0]-GUN_POS[0]), 
+                                            CEILING_HEIGHT, 
+                                            laser_intersect_ceiling_percent*(laser_endpoint[2]-GUN_POS[2]) };
+      if (laser_intersect_ceiling[0] > CEILING_MIN_X && laser_intersect_ceiling[0] < CEILING_MAX_X &&
+          laser_intersect_ceiling[2] > CEILING_MIN_Z && laser_intersect_ceiling[2] > CEILING_MAX_Z ) {
+            // draw dot at intersection with ceiling
+            glPushMatrix();
+            glTranslatef(laser_intersect_ceiling[0], laser_intersect_ceiling[1], laser_intersect_ceiling[2]);
+            glutSolidSphere(1.0, 15, 15);
+            glPopMatrix();
+      }
+    }
+  }
 }
 
 // this is for clamping the numbers between 0 & 360. used for rotation values in the mouse move function
