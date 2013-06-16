@@ -1,7 +1,7 @@
 #include "render.h"
 #include <vector>
 #include "balloon.hpp"
-//#include "SOIL.h"
+#include "SOIL.h"
 
 #define TIMER 33
 
@@ -328,8 +328,23 @@ void Render::display(void)
     glRotatef(rot[1], 0.0f, 1.0f, 0.0f);
     glRotatef(rot[2], 0.0f, 0.0f, 1.0f);
   
-  drawCeiling();
+    drawCeiling();
 
+    /* load an image file directly as a new OpenGL texture */
+    GLuint tex_2d = SOIL_load_OGL_texture
+	(
+     "pow.png",
+     SOIL_LOAD_AUTO,
+     SOIL_CREATE_NEW_ID,
+     SOIL_FLAG_MIPMAPS | SOIL_FLAG_INVERT_Y | SOIL_FLAG_NTSC_SAFE_RGB | SOIL_FLAG_COMPRESS_TO_DXT
+     );
+	
+    /* check for an error during the load process */
+    if( 0 == tex_2d )
+    {
+        printf( "SOIL loading error: '%s'\n", SOIL_last_result() );
+    }
+    
 	//WHY?
   glDisable(GL_COLOR_MATERIAL);
 
