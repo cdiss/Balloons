@@ -14,7 +14,7 @@ Balloon::Balloon(BalloonColor aColor) {
         aColor = BLUE;
     } else if (newColor_int == 2){
         aColor = GREEN;
-    }else {
+    } else {
       aColor = YELLOW;
     }
   }
