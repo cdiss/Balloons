@@ -22,7 +22,7 @@ Balloon::Balloon(BalloonColor aColor) {
   pos[1] = -100.0f;
   pos[2] = rand()%370 - 200.0f;
   color = aColor;
-  spd = ((float)(rand()%100))/50.0f+0.5f;
+  spd = ((float)(rand()%100))/200.0f+0.5f;
 }
 
 GLMmodel* Balloon::pmodel = NULL;

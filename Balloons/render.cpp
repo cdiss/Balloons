@@ -6,6 +6,14 @@
 
 using namespace std;
 
+  const float LASER_SIGHT_LENGTH = 600.0f;
+  const float CEILING_HEIGHT = 135.0f;
+  const float CEILING_MIN_X = -200.0f;
+  const float CEILING_MAX_X = 200.0f;
+  const float CEILING_MIN_Z = -200.0f;
+  const float CEILING_MAX_Z = 170.0f;
+  const float GUN_POS[] = {0.0f, -50.0f, 300.0f};
+
 void recomputeFrame(int value);
 std::vector<Balloon*> balloons;
 float gunYawDegrees = 0.0f;
@@ -343,24 +351,20 @@ void Render::drawCeiling(void)
   glMaterialfv(GL_FRONT, GL_DIFFUSE, diffuseCeiling);
   glMaterialfv(GL_FRONT, GL_SPECULAR, specularCeiling);
   glBegin(GL_POLYGON);
-    glVertex3f(-200.0f, 135.0f, -200.0f);
-    glVertex3f(-200.0f, 135.0f, 170.0f);
-    glVertex3f(200.0f, 135.0f, 170.0f);
-    glVertex3f(200.0f, 135.0f, -200.0f);
+    glVertex3f(CEILING_MIN_X, CEILING_HEIGHT, CEILING_MIN_Z);
+    glVertex3f(CEILING_MIN_X, CEILING_HEIGHT, CEILING_MAX_Z);
+    glVertex3f(CEILING_MAX_X, CEILING_HEIGHT, CEILING_MAX_Z);
+    glVertex3f(CEILING_MAX_X, CEILING_HEIGHT, CEILING_MIN_Z);
   glEnd();
   glPopMatrix();
 }
 
 void Render::drawGunSights(void)
 {
-  const float LASER_SIGHT_LENGTH = 600.0f;
-  const float CEILING_HEIGHT = 135.0f;
-  const float CEILING_MIN_X = -200.0f;
-  const float CEILING_MAX_X = 200.0f;
-  const float CEILING_MIN_Z = -200.0f;
-  const float CEILING_MAX_Z = 170.0f;
-  const float GUN_POS[] = {0.0f, -50.0f, 300.0f};
-
+  float brightRed[] = {1.0f, 0.0f, 0.0f, 1.0f};
+  glMaterialfv(GL_FRONT, GL_AMBIENT, brightRed);
+  glMaterialfv(GL_FRONT, GL_DIFFUSE, brightRed);
+  
   glPushMatrix();
     glTranslatef(GUN_POS[0], GUN_POS[1], GUN_POS[2]);
     glutSolidSphere(5.0, 50, 50);  // the gun for now (programmer art haha)
