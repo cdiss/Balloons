@@ -24,6 +24,8 @@ float gunYawDegrees = 0.0f;
 float gunPitchDegrees = 30.0f;
 
 int balloonCollisionIndex = -1;
+clock_t initialTime;
+bool keepRunning = true;
 
 void recomputeFrame(int value)
 {
@@ -37,7 +39,7 @@ void recomputeFrame(int value)
   }
 
   glutPostRedisplay();
-	glutTimerFunc(TIMER, recomputeFrame, value);
+	if(keepRunning) glutTimerFunc(TIMER, recomputeFrame, value);
 }
 
 // Default constructor
@@ -164,6 +166,8 @@ void Render::init(void)
         glmVertexNormals(pmodelGreen, 90.0);
     }
 	Balloon::setModelGreen(pmodelGreen);
+
+  initialTime = clock(); //initial starting time
 }
 
 void Render::reshape(int w, int h)
@@ -369,6 +373,8 @@ void Render::display(void)
 
   drawGunSights();
 
+  drawTimer();
+
   // this allows opengl to wait for the draw buffer to be ready in the background for the next frame
 	// therefore, while the current buffer is being drawn in the current frame, a buffer is set ready to draw on frame+1
 	// this call is effective only when GL_DOUBLE is enabled in glutInitDisplayMode in the main function
@@ -483,6 +489,31 @@ void Render::drawGunSights(void)
     } else {
       //cout << "Not calculating ceiling intersection" << endl;
     }
+  }
+}
+
+void Render::drawTimer() {
+  glRasterPos2i(-200, -150);
+  glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
+  string s = "Time elapsed: ";
+  for(int i = 0; i < s.size(); i++) {
+    glutBitmapCharacter(GLUT_BITMAP_HELVETICA_18, s[i]);
+  }
+  
+  clock_t final = clock() - initialTime; //final ending time
+  
+  double elapsed_time = (double)final / ((double)CLOCKS_PER_SEC);
+
+  std::ostringstream strs;
+  strs << elapsed_time;
+  std::string str = strs.str();
+
+  for(int j = 0; j < str.size(); j++) {
+    glutBitmapCharacter(GLUT_BITMAP_HELVETICA_18, str[j]);
+  }
+  
+  if(final > 60000) {
+    keepRunning = false;
   }
 }
 
