@@ -10,7 +10,6 @@ void recomputeFrame(int value);
 std::vector<Balloon*> balloons;
 float gunYawDegrees = 0.0f;
 float gunPitchDegrees = 30.0f;
-std::vector<float*> sphereLocations;
 
 void recomputeFrame(int value)
 {
@@ -132,15 +131,10 @@ void Render::mouseClick(int button, int state, int x, int y)
 	{
 		mOldX = x;
 		mOldY = y;
-    float* temp;
     switch (button)  
 		{
 			case GLUT_LEFT_BUTTON:
 				mButton = LEFT;
-        temp = new float[2];
-        temp[0] = (float)x;  temp[1] = (float)y;
-        sphereLocations.push_back(temp);
-        cout << "Added a sphere at " << temp[0] << ", " << temp[1] << endl;
 				break;
 			case GLUT_MIDDLE_BUTTON: 
 				mButton = MIDDLE;
@@ -160,7 +154,8 @@ void Render::mouseClick(int button, int state, int x, int y)
 
 void Render::mouseMove(int x, int y)
 {
-	if (mButton == LEFT) 
+	/*
+  if (mButton == LEFT) 
 	{
 		rot[0] -= ((mOldY - y) * 180.0f) / 1000.0f;
 		rot[1] -= ((mOldX - x) * 180.0f) / 1000.0f;
@@ -177,9 +172,47 @@ void Render::mouseMove(int x, int y)
 		eye[1] -= ((mOldY - y) * 180.0f) / 1000.0f;
 		clamp(rot[0], rot[1], rot[2]);
 	}	 
-	mOldX = x; 
+  */
+  
+  if (mButton == LEFT) {
+    float angle = atan(((float)y-mOldY)/((float)x-mOldX));
+    if (x-mOldX > 0.0f) {  // move was somewhat to the right
+      if (angle < -M_PI/3) {  // move down only
+        gunPitchDegrees -= 0.5f;
+      } else if (angle < -M_PI/6) {  // move both down and right
+        gunPitchDegrees -= 0.5f;
+        gunYawDegrees -= 0.5f;
+      } else if (angle < M_PI/6) {  // move right only
+        gunYawDegrees -= 0.5f;
+      } else if (angle < M_PI/3) {  // move both up and right
+        gunPitchDegrees += 0.5f;
+        gunYawDegrees -= 0.5f;
+      } else {  // move up only
+        gunPitchDegrees += 0.5f;
+      }
+    } else {  // move was somewhat to the left
+      if (angle < -M_PI/3) {  // move up only
+        gunPitchDegrees += 0.5f;
+      } else if (angle < -M_PI/6) {  // move both up and left
+        gunPitchDegrees += 0.5f;
+        gunYawDegrees += 0.5f;
+      } else if (angle < M_PI/6) {  // move left only
+        gunYawDegrees += 0.5f;
+      } else if (angle < M_PI/3) {  // move both down and left
+        gunPitchDegrees -= 0.5f;
+        gunYawDegrees += 0.5f;
+      } else {  // move down only
+        gunPitchDegrees -= 0.5f;
+      }
+    }
+    if(gunYawDegrees > 80.0f) gunYawDegrees = 80.0f;
+    if(gunYawDegrees < -80.0f) gunYawDegrees = -80.0f;
+    if(gunPitchDegrees > 80.0f) gunPitchDegrees = 80.0f;
+    if(gunPitchDegrees < -10.0f) gunPitchDegrees = -10.0f;
+  }
+  mOldX = x; 
 	mOldY = y;
-
+    
 }
 
 void Render::keyPos(unsigned char key, int x, int y)
@@ -258,12 +291,6 @@ void Render::display(void)
   glEnable(GL_COLOR_MATERIAL);
 
   drawGunSights();
-	
-  for(int i=0; i<sphereLocations.size(); i++) {
-    glLoadIdentity();
-    glTranslatef((sphereLocations.at(i)[0]-Wx/2), (sphereLocations.at(i)[1]-Wy/2), 0.0f);
-    glutSolidSphere(5.0f, 15, 15);
-  }
 
   // this allows opengl to wait for the draw buffer to be ready in the background for the next frame
 	// therefore, while the current buffer is being drawn in the current frame, a buffer is set ready to draw on frame+1
