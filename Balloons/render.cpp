@@ -6,18 +6,23 @@
 
 using namespace std;
 
-  const float LASER_SIGHT_LENGTH = 800.0f;
+  const float LASER_SIGHT_LENGTH = 600.0f;
   const float CEILING_HEIGHT = 135.0f;
   const float CEILING_MIN_X = -200.0f;
   const float CEILING_MAX_X = 200.0f;
   const float CEILING_MIN_Z = -200.0f;
   const float CEILING_MAX_Z = 170.0f;
   const float GUN_POS[] = {0.0f, -50.0f, 300.0f};
+  const float ACCURACY_TOLERANCE = 18.0f;
 
 void recomputeFrame(int value);
+float mag(float* v);
+
 std::vector<Balloon*> balloons;
 float gunYawDegrees = 0.0f;
 float gunPitchDegrees = 30.0f;
+
+int balloonCollisionIndex = -1;
 
 void recomputeFrame(int value)
 {
@@ -183,6 +188,11 @@ void Render::mouseClick(int button, int state, int x, int y)
         break;
 			case GLUT_RIGHT_BUTTON:
 				mButton = RIGHT;
+        if (balloonCollisionIndex >= 0) {
+          delete balloons.at(balloonCollisionIndex);
+          balloons.erase(balloons.begin()+balloonCollisionIndex);
+          balloons.push_back(new Balloon());
+        }
         break;
 			default:
         break;
@@ -399,6 +409,29 @@ void Render::drawGunSights(void)
   //system("CLS");
   //cout << "laser_endpoint: (" << laser_endpoint[0] << ", " << laser_endpoint[1] << ", " << laser_endpoint[2] << ") " << endl;
 
+  // calculation for dots on balloon
+  float laser_unit_vector[3];
+  laser_unit_vector[0] = (laser_endpoint[0]-GUN_POS[0])/LASER_SIGHT_LENGTH;
+  laser_unit_vector[1] = (laser_endpoint[1]-GUN_POS[1])/LASER_SIGHT_LENGTH;
+  laser_unit_vector[2] = (laser_endpoint[2]-GUN_POS[2])/LASER_SIGHT_LENGTH;
+  bool found = false;
+  for (int i=0; i<balloons.size(); i++) {
+    float* collision_vec = balloons[i]->findCollisionVectorWith((float*)GUN_POS, laser_unit_vector);
+    if(mag(collision_vec) < ACCURACY_TOLERANCE) {
+      glPushMatrix();
+      glTranslatef(balloons[i]->pos[0], balloons[i]->pos[1], balloons[i]->pos[2]);
+      glTranslatef(collision_vec[0], collision_vec[1], collision_vec[2]);
+      balloonCollisionIndex = i;
+      found = true;
+      cout << "Drawing dot on balloon" << endl;
+      glutSolidSphere(5.0, 15, 15);
+      glPopMatrix();
+    }
+  }
+  if (!found) balloonCollisionIndex = -1;
+  cout << "balloonCollisionIndex = " << balloonCollisionIndex << endl;
+
+  // calculation for ceiling dots
   if(gunPitchDegrees != 0.0f) {   // avoid division by 0
     float laser_intersect_ceiling_percent = (CEILING_HEIGHT-GUN_POS[1])/(laser_endpoint[1]-GUN_POS[1]);  // the percent of the way along the laser sight that the ceiling is hit
     //cout << "laser_intersect_ceiling_percent: " << laser_intersect_ceiling_percent << endl;
@@ -435,3 +468,6 @@ void Render::clamp(float v0, float v1, float v2)
 		v2 = 0;
 }
 
+float mag(float* v) {
+  return sqrt(v[0]*v[0] + v[1]*v[1] + v[2]*v[2]);
+}

@@ -5,6 +5,8 @@
 
 using namespace std;
 
+float* x_prod(float* v1, float* v2);
+
 Balloon::Balloon(BalloonColor aColor) {
   if (aColor == NONE) {
     int newColor_int = rand()%4;
@@ -66,6 +68,11 @@ bool Balloon::isOutOfBounds() {
   return (pos[1] > 100.0f);
 }
 
+float* Balloon::findCollisionVectorWith(float* point, float* unit_vector) {
+  float w[3] = {pos[0] - point[0], pos[1] - point[1], pos[2] - point[2]};
+  return x_prod(unit_vector, w);
+}
+
 void Balloon::setModelRed(GLMmodel* aModel) {
   pmodelRed = aModel;
 }
@@ -82,4 +89,11 @@ void Balloon::setModelGreen(GLMmodel* aModel){
     pmodelGreen = aModel;
 }
 
+float* x_prod(float* v1, float* v2) {
+  float return_me[3];
+  return_me[0] = v1[1]*v2[2] - v1[2]*v2[1];
+  return_me[1] = v1[2]*v2[0] - v1[0]*v2[2];
+  return_me[2] = v1[0]*v2[1] - v1[1]*v2[0];
+  return return_me;
+}
 

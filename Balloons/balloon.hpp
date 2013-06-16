@@ -14,17 +14,18 @@ enum BalloonColor {
 class Balloon {
 public:
   Balloon(BalloonColor aColor = NONE);
+  float pos[3];
   void randomizeForStart();
   void draw();
   void recompute();
   bool isOutOfBounds();
+  float* findCollisionVectorWith(float* point, float* unit_vector);
   static void setModelRed(GLMmodel*);
   static void setModelYellow(GLMmodel*);
   static void setModelBlue(GLMmodel*);
   static void setModelGreen(GLMmodel*);
     
 protected:
-  float pos[3];
   float spd;
   BalloonColor color;
   static GLMmodel* pmodelRed;
