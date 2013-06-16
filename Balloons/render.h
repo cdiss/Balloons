@@ -1,6 +1,8 @@
 #ifndef _RENDER_H
 #define _RENDER_H
 
+#include <time.h> //for timer
+#include <sstream> //for timer, to convert double to string
 #include <stdlib.h>
 #include <math.h>
 #include <iostream>
@@ -45,6 +47,7 @@ private:
 	void drawCeiling(void);
 	void drawObjBalloon(void);
   void drawGunSights(void);
+  void drawTimer(void);
 };
 
 #endif

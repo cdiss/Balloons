@@ -68,7 +68,7 @@ int main(int argc, char ** argv)
 
 	// Opengl initialization is over
 	// Now tell it to create the opengl window
-	int render_window = glutCreateWindow("Vijay's Render Class");
+	int render_window = glutCreateWindow("Balloons");
 
 	// init() consists of all the user defined initialization functions & variables
 	// example, whether the lighting is enabled, what is the background color, etc

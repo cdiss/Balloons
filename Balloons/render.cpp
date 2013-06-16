@@ -1,7 +1,7 @@
 #include "render.h"
 #include <vector>
 #include "balloon.hpp"
-//#include "SOIL.h"
+#include "SOIL.h"
 
 #define TIMER 33
 
@@ -26,6 +26,8 @@ float gunPitchDegrees = 30.0f;
 int score = 0;
 
 int balloonCollisionIndex = -1;
+clock_t initialTime;
+bool keepRunning = true;
 
 void recomputeFrame(int value)
 {
@@ -39,7 +41,7 @@ void recomputeFrame(int value)
   }
 
   glutPostRedisplay();
-	glutTimerFunc(TIMER, recomputeFrame, value);
+	if(keepRunning) glutTimerFunc(TIMER, recomputeFrame, value);
 }
 
 // Default constructor
@@ -166,6 +168,8 @@ void Render::init(void)
         glmVertexNormals(pmodelGreen, 90.0);
     }
 	Balloon::setModelGreen(pmodelGreen);
+
+  initialTime = clock(); //initial starting time
 }
 
 void Render::reshape(int w, int h)
@@ -331,8 +335,34 @@ void Render::display(void)
     glRotatef(rot[1], 0.0f, 1.0f, 0.0f);
     glRotatef(rot[2], 0.0f, 0.0f, 1.0f);
   
-  drawCeiling();
+    drawCeiling();
 
+    /* load an image file directly as a new OpenGL texture */
+    GLuint tex_2d = SOIL_load_OGL_texture
+	(
+     "data/pow.png",
+     SOIL_LOAD_AUTO,
+     SOIL_CREATE_NEW_ID,
+     SOIL_FLAG_MIPMAPS | SOIL_FLAG_INVERT_Y | SOIL_FLAG_NTSC_SAFE_RGB | SOIL_FLAG_COMPRESS_TO_DXT
+     );
+	
+    /* check for an error during the load process */
+    if( 0 == tex_2d )
+    {
+        printf( "SOIL loading error: '%s'\n", SOIL_last_result() );
+    }
+    
+    glColor3f(0.0f,1.0f,.50f);
+    glBindTexture(GL_TEXTURE_2D, tex_2d);
+    glEnable(GL_TEXTURE_2D);
+    glBegin(GL_QUADS);
+    glTexCoord2d(0,0);        glVertex3f(-8.0, -8.0, 0.0);
+    glTexCoord2d(0,1);        glVertex3f(-8.0, 8.0, 0.0);
+    glTexCoord2d(1,1);        glVertex3f(8.0, 8.0, 0.0);
+    glTexCoord2d(1,0);        glVertex3f(8.0, -8.0, 0.0);
+    
+    glEnd();
+    
 	//WHY?
   glDisable(GL_COLOR_MATERIAL);
 
@@ -345,6 +375,8 @@ void Render::display(void)
   glEnable(GL_COLOR_MATERIAL);
 
   drawGunSights();
+
+  drawTimer();
 
   // this allows opengl to wait for the draw buffer to be ready in the background for the next frame
 	// therefore, while the current buffer is being drawn in the current frame, a buffer is set ready to draw on frame+1
@@ -460,6 +492,31 @@ void Render::drawGunSights(void)
     } else {
       //cout << "Not calculating ceiling intersection" << endl;
     }
+  }
+}
+
+void Render::drawTimer() {
+  glRasterPos2i(-200, -150);
+  glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
+  string s = "Time elapsed: ";
+  for(int i = 0; i < s.size(); i++) {
+    glutBitmapCharacter(GLUT_BITMAP_HELVETICA_18, s[i]);
+  }
+  
+  clock_t final = clock() - initialTime; //final ending time
+  
+  double elapsed_time = (double)final / ((double)CLOCKS_PER_SEC);
+
+  std::ostringstream strs;
+  strs << elapsed_time;
+  std::string str = strs.str();
+
+  for(int j = 0; j < str.size(); j++) {
+    glutBitmapCharacter(GLUT_BITMAP_HELVETICA_18, str[j]);
+  }
+  
+  if(final > 60000) {
+    keepRunning = false;
   }
 }
 
