@@ -29,7 +29,7 @@ void Balloon::draw() {
   glPopMatrix();
     glPushMatrix();
     glTranslatef(pos[0], pos[1], pos[2]);
-    glScale(5,5, 5);
+    glScalef(5,5, 5);
     glRotatef(180.0f, 0.0f, 0.0f, 1.0f);
     glmDraw(pmodelYellow, GLM_SMOOTH | GLM_MATERIAL);
     glPopMatrix();

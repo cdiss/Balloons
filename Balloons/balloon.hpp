@@ -16,6 +16,7 @@ protected:
   float pos[3];
   float spd;
   static GLMmodel* pmodel;
+  static GLMmodel* pmodelYellow;
 };
 
 #endif
