@@ -105,6 +105,8 @@ void Render::init(void)
 	
 	// Read an obj file and load it, but not displayed yet
   GLMmodel* pmodel = NULL;
+  GLMmodel* pmodelYellow = NULL;
+    
   if (!pmodel) {
       pmodel = glmReadOBJ("data/balloon.obj");
       if (!pmodel) { 
@@ -115,6 +117,17 @@ void Render::init(void)
       glmVertexNormals(pmodel, 90.0);
   }
 	Balloon::setModel(pmodel);
+    
+    if (!pmodelYellow) {
+        pmodelYellow = glmReadOBJ("data/balloonYellow.obj");
+        if (!pmodelYellow) {
+            exit(0);
+        }
+        glmUnitize(pmodelYellow);
+        glmFacetNormals(pmodelYellow);
+        glmVertexNormals(pmodelYellow, 90.0);
+    }
+	Balloon::setModel(pmodelYellow);
 
 }
 
@@ -236,7 +249,6 @@ void Render::display(void)
     glRotatef(rot[0], 1.0f, 0.0f, 0.0f);
     glRotatef(rot[1], 0.0f, 1.0f, 0.0f);
     glRotatef(rot[2], 0.0f, 0.0f, 1.0f);
-  
   
   drawCeiling();
 

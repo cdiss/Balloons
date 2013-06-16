@@ -13,6 +13,8 @@ Balloon::Balloon() {
 }
 
 GLMmodel* Balloon::pmodel = NULL;
+GLMmodel* Balloon::pmodelYellow = NULL;
+
 
 void Balloon::randomizeForStart() {
   pos[1] = rand()%150 - 100.0f;
@@ -21,9 +23,16 @@ void Balloon::randomizeForStart() {
 void Balloon::draw() {
   glPushMatrix();
   glTranslatef(pos[0], pos[1], pos[2]);
+  glScalef(5, 5, 5);
   glRotatef(180.0f, 0.0f, 0.0f, 1.0f);
   glmDraw(pmodel, GLM_SMOOTH | GLM_MATERIAL);
   glPopMatrix();
+    glPushMatrix();
+    glTranslatef(pos[0], pos[1], pos[2]);
+    glScale(5,5, 5);
+    glRotatef(180.0f, 0.0f, 0.0f, 1.0f);
+    glmDraw(pmodelYellow, GLM_SMOOTH | GLM_MATERIAL);
+    glPopMatrix();
 }
 
 void Balloon::recompute() {
