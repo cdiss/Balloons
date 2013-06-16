@@ -13,8 +13,8 @@ using namespace std;
   const float CEILING_MAX_X = 200.0f;
   const float CEILING_MIN_Z = -200.0f;
   const float CEILING_MAX_Z = 170.0f;
-  const float GUN_POS[] = {0.0f, -50.0f, 300.0f};
-  const float ACCURACY_TOLERANCE = 18.0f;
+  const float GUN_POS[] = {0.0f, -50.0f, 350.0f};
+  const float ACCURACY_TOLERANCE = 15.0f;
 
 void recomputeFrame(int value);
 float mag(float* v);
@@ -314,7 +314,7 @@ void Render::display(void)
 	glLoadIdentity();
 	
 	// perspective projection loaded with new values for Wx and Wy updated
-	gluPerspective(45, (GLfloat) Wx/(GLfloat) Wy, 1.0, 10000.0);
+	gluPerspective(55, (GLfloat) Wx/(GLfloat) Wy, 1.0, 10000.0);
 	// use glOrtho for a 3D orthogonal projection
 	//glOrtho(-100, 100, -100, 100, -100, 100);
 
@@ -416,21 +416,23 @@ void Render::drawGunSights(void)
   laser_unit_vector[1] = (laser_endpoint[1]-GUN_POS[1])/LASER_SIGHT_LENGTH;
   laser_unit_vector[2] = (laser_endpoint[2]-GUN_POS[2])/LASER_SIGHT_LENGTH;
   bool found = false;
-  for (int i=0; i<balloons.size(); i++) {
+  for (unsigned int i=0; i<balloons.size(); i++) {
     float* collision_vec = balloons[i]->findCollisionVectorWith((float*)GUN_POS, laser_unit_vector);
+    //cout << "collision_vec: (" << collision_vec[0] << ", " << collision_vec[1] << ", " << collision_vec[2] << ") " << endl;
+    //cout << "mag: " << mag(collision_vec) << endl;
     if(mag(collision_vec) < ACCURACY_TOLERANCE) {
       glPushMatrix();
       glTranslatef(balloons[i]->pos[0], balloons[i]->pos[1], balloons[i]->pos[2]);
-      glTranslatef(collision_vec[0], collision_vec[1], collision_vec[2]);
+      glTranslatef(collision_vec[1], -collision_vec[0], collision_vec[2]+10.0f);
       balloonCollisionIndex = i;
       found = true;
-      cout << "Drawing dot on balloon" << endl;
-      glutSolidSphere(5.0, 15, 15);
+      //cout << "Drawing dot on balloon, at (" << balloons[i]->pos[0] + collision_vec[0] << ", " << balloons[i]->pos[1] + collision_vec[1] << ", " << balloons[i]->pos[2] + collision_vec[2] << ") " << endl;
+      glutSolidSphere(7.0, 15, 15);
       glPopMatrix();
     }
+    delete[] collision_vec;
   }
   if (!found) balloonCollisionIndex = -1;
-  cout << "balloonCollisionIndex = " << balloonCollisionIndex << endl;
 
   // calculation for ceiling dots
   if(gunPitchDegrees != 0.0f) {   // avoid division by 0

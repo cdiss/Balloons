@@ -90,7 +90,7 @@ void Balloon::setModelGreen(GLMmodel* aModel){
 }
 
 float* x_prod(float* v1, float* v2) {
-  float return_me[3];
+  float* return_me = new float[3];
   return_me[0] = v1[1]*v2[2] - v1[2]*v2[1];
   return_me[1] = v1[2]*v2[0] - v1[0]*v2[2];
   return_me[2] = v1[0]*v2[1] - v1[1]*v2[0];
