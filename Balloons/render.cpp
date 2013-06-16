@@ -23,6 +23,8 @@ std::vector<Balloon*> balloons;
 float gunYawDegrees = 0.0f;
 float gunPitchDegrees = 30.0f;
 
+int score = 0;
+
 int balloonCollisionIndex = -1;
 
 void recomputeFrame(int value)
@@ -193,6 +195,7 @@ void Render::mouseClick(int button, int state, int x, int y)
           delete balloons.at(balloonCollisionIndex);
           balloons.erase(balloons.begin()+balloonCollisionIndex);
           balloons.push_back(new Balloon());
+          score++;
         }
         break;
 			default:
