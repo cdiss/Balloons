@@ -48,6 +48,7 @@ private:
 	void drawObjBalloon(void);
   void drawGunSights(void);
   void drawTimer(void);
+  void drawScore(void);
 };
 
 #endif
