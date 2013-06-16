@@ -132,22 +132,24 @@ void Render::mouseClick(int button, int state, int x, int y)
 	{
 		mOldX = x;
 		mOldY = y;
-        switch (button)  
+    float* temp;
+    switch (button)  
 		{
 			case GLUT_LEFT_BUTTON:
 				mButton = LEFT;
-        float* temp = new float[2];
+        temp = new float[2];
         temp[0] = (float)x;  temp[1] = (float)y;
         sphereLocations.push_back(temp);
+        cout << "Added a sphere at " << temp[0] << ", " << temp[1] << endl;
 				break;
 			case GLUT_MIDDLE_BUTTON: 
-				mButton = MIDDLE; 
-				break;
+				mButton = MIDDLE;
+        break;
 			case GLUT_RIGHT_BUTTON:
 				mButton = RIGHT;
-				break;
+        break;
 			default:
-				break;
+        break;
 		}
 	}
 	else if (state == GLUT_UP)
@@ -257,11 +259,10 @@ void Render::display(void)
 
   drawGunSights();
 	
-  if (mButton = LEFT) {
+  for(int i=0; i<sphereLocations.size(); i++) {
     glLoadIdentity();
-    glTranslatef((mOldX-Wx/2), (mOldY-Wy/2), 0.0f);
-    cout << "Printing a sphere at mouse pos" << endl;
-    glutSolidSphere(2.0f, 15, 15);
+    glTranslatef((sphereLocations.at(i)[0]-Wx/2), (sphereLocations.at(i)[1]-Wy/2), 0.0f);
+    glutSolidSphere(5.0f, 15, 15);
   }
 
   // this allows opengl to wait for the draw buffer to be ready in the background for the next frame
