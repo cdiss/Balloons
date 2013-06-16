@@ -29,6 +29,8 @@ protected:
   BalloonColor color;
   static GLMmodel* pmodel;
   static GLMmodel* pmodelYellow;
+    static GLMmodel* pmodelBlue;
+    static GLMmodel* pmodelGreen;
 };
 
 #endif
