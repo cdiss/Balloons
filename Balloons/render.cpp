@@ -6,7 +6,7 @@
 
 using namespace std;
 
-  const float LASER_SIGHT_LENGTH = 600.0f;
+  const float LASER_SIGHT_LENGTH = 800.0f;
   const float CEILING_HEIGHT = 135.0f;
   const float CEILING_MIN_X = -200.0f;
   const float CEILING_MAX_X = 200.0f;
@@ -393,24 +393,33 @@ void Render::drawGunSights(void)
   
   // In the same coordinate system as the one that the ceiling is drawn in
   float laser_endpoint[3];
-  laser_endpoint[0] = GUN_POS[0] + LASER_SIGHT_LENGTH * sin(gunYawDegrees/180.0*M_PI) * cos(gunPitchDegrees/180.0*M_PI);
-  laser_endpoint[1] = GUN_POS[1] + LASER_SIGHT_LENGTH * cos(gunPitchDegrees/180.0*M_PI);
-  laser_endpoint[2] = GUN_POS[2] + LASER_SIGHT_LENGTH * cos(gunYawDegrees/180.0*M_PI) * sin(gunPitchDegrees/180.0*M_PI);
-  
+  laser_endpoint[0] = GUN_POS[0] - LASER_SIGHT_LENGTH * sin(gunYawDegrees/180.0*M_PI) * cos(gunPitchDegrees/180.0*M_PI);
+  laser_endpoint[1] = GUN_POS[1] + LASER_SIGHT_LENGTH * sin(gunPitchDegrees/180.0*M_PI);
+  laser_endpoint[2] = GUN_POS[2] - LASER_SIGHT_LENGTH * cos(gunYawDegrees/180.0*M_PI) * cos(gunPitchDegrees/180.0*M_PI);
+  //system("CLS");
+  //cout << "laser_endpoint: (" << laser_endpoint[0] << ", " << laser_endpoint[1] << ", " << laser_endpoint[2] << ") " << endl;
+
   if(gunPitchDegrees != 0.0f) {   // avoid division by 0
     float laser_intersect_ceiling_percent = (CEILING_HEIGHT-GUN_POS[1])/(laser_endpoint[1]-GUN_POS[1]);  // the percent of the way along the laser sight that the ceiling is hit
+    //cout << "laser_intersect_ceiling_percent: " << laser_intersect_ceiling_percent << endl;
     if (laser_intersect_ceiling_percent > 0.0f && laser_intersect_ceiling_percent < 1.0f) {
-      float laser_intersect_ceiling[3] = {laser_intersect_ceiling_percent*(laser_endpoint[0]-GUN_POS[0]), 
-                                            CEILING_HEIGHT, 
-                                            laser_intersect_ceiling_percent*(laser_endpoint[2]-GUN_POS[2]) };
+      float laser_intersect_ceiling[3] = {GUN_POS[0] + laser_intersect_ceiling_percent*(laser_endpoint[0]-GUN_POS[0]), 
+                                            GUN_POS[1] + laser_intersect_ceiling_percent*(laser_endpoint[1]-GUN_POS[1]), 
+                                            GUN_POS[2] + laser_intersect_ceiling_percent*(laser_endpoint[2]-GUN_POS[2]) };
+      //cout << "laser_intersect_ceiling: (" << laser_intersect_ceiling[0] << ", " << laser_intersect_ceiling[1] << ", " << laser_intersect_ceiling[2] << ") " << endl;
       if (laser_intersect_ceiling[0] > CEILING_MIN_X && laser_intersect_ceiling[0] < CEILING_MAX_X &&
-          laser_intersect_ceiling[2] > CEILING_MIN_Z && laser_intersect_ceiling[2] > CEILING_MAX_Z ) {
+          laser_intersect_ceiling[2] > CEILING_MIN_Z && laser_intersect_ceiling[2] < CEILING_MAX_Z ) {
             // draw dot at intersection with ceiling
             glPushMatrix();
             glTranslatef(laser_intersect_ceiling[0], laser_intersect_ceiling[1], laser_intersect_ceiling[2]);
+            //cout << "Drawing dots" << endl;
             glutSolidSphere(2.0, 15, 15);
             glPopMatrix();
+      } else {
+        //cout << "Not drawing dots" << endl;
       }
+    } else {
+      //cout << "Not calculating ceiling intersection" << endl;
     }
   }
 }
