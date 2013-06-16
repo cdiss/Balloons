@@ -79,19 +79,18 @@ void Render::init(void)
 	glEnable(GL_LIGHT1);
 	glEnable(GL_NORMALIZE);
 
-
 	// Setup Ambient lighting parameters
 	GLfloat ambientColor[] = { 0.1f, 0.1f, 0.1f, 1.0f};
 	glLightModelfv(GL_LIGHT_MODEL_AMBIENT, ambientColor);
 
 	// set up positioned lights
-	GLfloat lightColor0[] = {0.5f, 0.5f, 0.5f, 1.0f}; //Color (0.5, 0.5, 0.5)
+	GLfloat lightColor0[] = {0.3f, 0.3f, 0.3f, 1.0f}; //Color (0.5, 0.5, 0.5)
     GLfloat lightPos0[] = {4.0f, 0.0f, 8.0f, 1.0f}; //Positioned at (4, 0, 8)
 	glLightfv(GL_LIGHT0, GL_DIFFUSE, lightColor0);
     glLightfv(GL_LIGHT0, GL_POSITION, lightPos0);
 
 	 //Add directed light
-    GLfloat lightColor1[] = {0.5f, 0.2f, 0.2f, 1.0f}; //Color (0.5, 0.2, 0.2)
+    GLfloat lightColor1[] = {0.3f, 0.1f, 0.1f, 1.0f}; //Color (0.5, 0.2, 0.2)
     GLfloat lightPos1[] = {-1.0f, 0.5f, 0.5f, 0.0f};  //Coming from the direction (-1, 0.5, 0.5)
     glLightfv(GL_LIGHT1, GL_DIFFUSE, lightColor1);
     glLightfv(GL_LIGHT1, GL_POSITION, lightPos1);
@@ -113,6 +112,8 @@ void Render::init(void)
 	// Read an obj file and load it, but not displayed yet
   GLMmodel* pmodel = NULL;
   GLMmodel* pmodelYellow = NULL;
+  GLMmodel* pmodelBlue = NULL;
+  GLMmodel* pmodelGreen = NULL;
     
   if (!pmodel) {
       pmodel = glmReadOBJ("data/balloon.obj");
@@ -135,7 +136,28 @@ void Render::init(void)
         glmVertexNormals(pmodelYellow, 90.0);
     }
 	Balloon::setModelYellow(pmodelYellow);
-
+    
+    if (!pmodelBlue) {
+        pmodelBlue = glmReadOBJ("data/balloonBlue.obj");
+        if (!pmodelBlue) {
+            exit(0);
+        }
+        glmUnitize(pmodelBlue);
+        glmFacetNormals(pmodelBlue);
+        glmVertexNormals(pmodelBlue, 90.0);
+    }
+	Balloon::setModelBlue(pmodelBlue);
+    
+    if (!pmodelGreen) {
+        pmodelGreen = glmReadOBJ("data/balloonGreen.obj");
+        if (!pmodelGreen) {
+            exit(0);
+        }
+        glmUnitize(pmodelGreen);
+        glmFacetNormals(pmodelGreen);
+        glmVertexNormals(pmodelGreen, 90.0);
+    }
+	Balloon::setModelGreen(pmodelGreen);
 }
 
 void Render::reshape(int w, int h)

@@ -20,6 +20,8 @@ public:
   bool isOutOfBounds();
   static void setModel(GLMmodel*);
   static void setModelYellow(GLMmodel*);
+  static void setModelBlue(GLMmodel*);
+  static void setModelGreen(GLMmodel*);
     
 protected:
   float pos[3];
